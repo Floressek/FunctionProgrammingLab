@@ -10,8 +10,9 @@ from matplotlib.pyplot import figure
 
 from src.utils.types import MovieData, PlotConfig
 from src.utils.logger import setup_logger
+from src.utils.config import ProjectConfig
 
-logger = setup_logger(name='data_analysis', log_file='logs/visualization.log')
+logger = setup_logger('visualization', ProjectConfig.get_log_file('visualization'))
 
 
 class VisualizationError(Exception):

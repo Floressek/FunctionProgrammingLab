@@ -4,8 +4,9 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 from .logger import setup_logger
+from .config import ProjectConfig
 
-logger = setup_logger(name='utils', log_file='logs/types.log')
+logger = setup_logger('utils', ProjectConfig.get_log_file('types'))
 
 # Alias for common types
 Rating = NewType('Rating', float)

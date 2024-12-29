@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List, Callable
 from functools import partial
 from utils.logger import setup_logger
+from utils.config import ProjectConfig
 
 from utils.types import MovieData, PlotConfig
 from src.data_analysis.data_processing import read_movie_data
@@ -13,19 +14,14 @@ from src.data_analysis.visualization import (
 )
 
 import warnings
-
 warnings.filterwarnings("ignore")
 
-# # Configure logging
-# logging.basicConfig(
-#     level=logging.INFO,
-#     format='%(asctime)s - %(levelname)s - %(message)s'
-# )
-# Skonfiguruj główny logger
-logger = setup_logger(__name__, 'logs/main.log')
 
+ProjectConfig.setup()
+# Initialize logger with string path
+logger = setup_logger(__name__, ProjectConfig.get_log_file("main"))
 
-def create_plot_functions(config: PlotConfig) -> List[Callable[[MovieData], None]]:
+def _create_plot_functions(config: PlotConfig) -> List[Callable[[MovieData], None]]:
     """Create list of plot generation functions with config"""
     plot_configs = [
         ('heatmap', create_heatmap),
@@ -52,11 +48,11 @@ def process_and_visualize(
 
         # Read and process data
         logger.info("Reading and processing data...")
-        movie_data = read_movie_data(data_path)
+        movie_data = read_movie_data(data_path) # read and clean data
 
         # Generate and save all plots
         logger.info("Generating visualizations...")
-        plot_functions = create_plot_functions(config)
+        plot_functions = _create_plot_functions(config)
 
         plot_names = {
             'create_heatmap': 'heatmap',
@@ -87,11 +83,16 @@ def process_and_visualize(
 def main():
     """Entry point"""
     config = PlotConfig()
-    data_path = Path(r'C:\Users\szyme\PycharmProjects\FunctionProgrammingLab\data\Rotten Tomatoes Movies.csv')
-    output_dir = Path('plots')
+    # Tried to use relative paths, but it didn't work, just add the full path of both on your machine
+    # data_path = Path(r'C:\Users\szyme\PycharmProjects\FunctionProgrammingLab\data\Rotten Tomatoes Movies.csv')
+    # output_dir = Path(r'C:\Users\szyme\PycharmProjects\FunctionProgrammingLab\plots')
+    #
+    # process_and_visualize(data_path, output_dir, config)
+
+    data_path = ProjectConfig.DATA_DIR / "Rotten Tomatoes Movies.csv"
+    output_dir = ProjectConfig.PLOTS_DIR
 
     process_and_visualize(data_path, output_dir, config)
-
 
 if __name__ == "__main__":
     main()

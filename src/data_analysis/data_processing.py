@@ -4,9 +4,10 @@ import pandas as pd
 from pathlib import Path
 
 from src.utils.types import MovieData
-from src.utils.logger import setup_logger
+from src.utils.logger import (setup_logger)
+from src.utils.config import ProjectConfig
 
-logger = setup_logger(name='utils', log_file='logs/data_processing.log')
+logger = setup_logger('data_analysis', ProjectConfig.get_log_file('data_processing'))
 
 
 class DataProcessingError(Exception):
@@ -17,6 +18,7 @@ class DataProcessingError(Exception):
 def read_movie_data(file_path: Path) -> MovieData:
     """Read and validate data from file -> after processed"""
     try:
+        logger.info("Data processing module initialized")  # Test logging
         logger.info(f'Reading movie data from {file_path}.')
         df = pd.read_csv(file_path)
         processed_data = process_raw_data(df)
