@@ -2,7 +2,7 @@ from typing import List, Tuple, Dict, Any, Union, NewType
 from dataclasses import dataclass
 import pandas as pd
 import numpy as np
-import pathlib as Path
+from pathlib import Path
 from .logger import setup_logger
 
 logger = setup_logger(name='utils', log_file='types.log')
