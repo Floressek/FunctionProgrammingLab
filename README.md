@@ -14,9 +14,6 @@ FunctionProgrammingLab/
 │   │   └── visualization.py
 │   ├── __init__.py
 │   └── main.py
-├── tests/
-│   ├── __init__.py
-│   └── test_data_processing.py
 ├── data/          # For input data files
 ├── plots/         # For generated plots
 ├── .gitignore

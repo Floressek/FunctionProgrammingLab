@@ -3,10 +3,10 @@ from typing import Callable, List, Dict, Any
 import pandas as pd
 from pathlib import Path
 
-from .types import MovieData
-from .logger import setup_logger
+from src.utils.types import MovieData
+from src.utils.logger import setup_logger
 
-logger = setup_logger(name='utils', log_file='data_processing.log')
+logger = setup_logger(name='utils', log_file='logs/data_processing.log')
 
 
 class DataProcessingError(Exception):
@@ -31,8 +31,10 @@ def process_raw_data(df: pd.DataFrame) -> pd.DataFrame:
     try:
         processing_functions: List[Callable[[pd.DataFrame], pd.DataFrame]] = [
             # list of functions to apply to the data in order, first dataFrame is the input, second is the output
-            convert_dates,
-            convert_numeric_columns,
+            _convert_dates,
+            _convert_numeric_columns,
+            _filter_valid_data,
+            _clean_genres
         ]
         return reduce(lambda data, func: func(data), processing_functions,
                       df)  # 3 args: function(lambda), iterable, initial value
@@ -41,7 +43,7 @@ def process_raw_data(df: pd.DataFrame) -> pd.DataFrame:
         raise DataProcessingError(f'Processing pipline error: {str(e)}')
 
 
-def convert_dates(df: pd.DataFrame) -> pd.DataFrame:
+def _convert_dates(df: pd.DataFrame) -> pd.DataFrame:
     """Convert dates"""
     try:
         return df.assign(
@@ -54,7 +56,7 @@ def convert_dates(df: pd.DataFrame) -> pd.DataFrame:
         raise DataProcessingError(f'Data conversion error: {str(e)}')
 
 
-def convert_numeric_columns(df: pd.DataFrame) -> pd.DataFrame:
+def _convert_numeric_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Convert numeric columns."""
     try:
         numeric_columns = {
@@ -76,7 +78,7 @@ def convert_numeric_columns(df: pd.DataFrame) -> pd.DataFrame:
         raise DataProcessingError(f'Error converting numeric columns: {str(e)}')
 
 
-def filter_valid_data(df: pd.DataFrame) -> pd.DataFrame:
+def _filter_valid_data(df: pd.DataFrame) -> pd.DataFrame:
     """Filter out rows with invalid data."""
     try:
         conditions = [
@@ -92,7 +94,7 @@ def filter_valid_data(df: pd.DataFrame) -> pd.DataFrame:
         raise DataProcessingError(f'Error filtering data: {str(e)}')
 
 
-def clean_genres(df: pd.DataFrame) -> pd.DataFrame:
+def _clean_genres(df: pd.DataFrame) -> pd.DataFrame:
     """Clean genres column."""
     try:
         return df.assign(

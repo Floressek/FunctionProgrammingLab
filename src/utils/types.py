@@ -5,7 +5,7 @@ import numpy as np
 from pathlib import Path
 from .logger import setup_logger
 
-logger = setup_logger(name='utils', log_file='types.log')
+logger = setup_logger(name='utils', log_file='logs/types.log')
 
 # Alias for common types
 Rating = NewType('Rating', float)
@@ -40,7 +40,7 @@ class MovieData:
 @dataclass(frozen=True)
 class PlotConfig:
     """Dataclass for plot configuration."""
-    figure_size: Tuple[int, int] = (12, 8) # default value
+    figure_size: Tuple[int, int] = (15, 10) # default value
     font_size: int = 10
     title_size: int = 14
     label_size: int = 12

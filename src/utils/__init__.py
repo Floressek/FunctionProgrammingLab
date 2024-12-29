@@ -9,12 +9,6 @@ from .types import (
     PlotConfig
 )
 
-from .data_processing import (
-    DataProcessingError,
-    read_movie_data,
-    process_raw_data,
-)
-
 __all__ = [
     'setup_logger',
     'Rating',
@@ -22,7 +16,4 @@ __all__ = [
     'MovieCount',
     'MovieData',
     'PlotConfig',
-    'DataProcessingError',
-    'read_movie_data',
-    'process_raw_data',
 ]
