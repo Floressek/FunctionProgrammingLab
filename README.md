@@ -9,10 +9,12 @@ FunctionProgrammingLab/
 ├── src/
 │   ├── utils/
 │   │   ├── __init__.py
+│   │   ├── config.py
 │   │   ├── types.py
 │   │   └── logger.py
 │   ├── data_analysis/
 │   │   ├── __init__.py
+│   │   ├── data_insights.py
 │   │   ├── data_processing.py
 │   │   └── visualization.py
 │   ├── __init__.py
