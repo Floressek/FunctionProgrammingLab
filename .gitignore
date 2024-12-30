@@ -49,6 +49,7 @@ htmlcov/
 *.html
 *.csv
 *.xlsx
+movie_analysis_insights.md
 
 # Temporary files
 *.tmp
