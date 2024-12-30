@@ -45,8 +45,8 @@ sequenceDiagram
     participant DP as data_processing.py
     participant Types as types.py
     participant Viz as visualization.py
+    participant DI as data_insights.py
     participant FS as FileSystem
-
     Main->>Types: Create PlotConfig
     Main->>DP: read_movie_data(file_path)
     DP->>FS: Read CSV file
@@ -54,18 +54,25 @@ sequenceDiagram
     
     rect rgba(0, 128, 0, 0.1)
         Note over DP: process_raw_data
-        DP->>DP: _convert_dates
-        DP->>DP: _convert_numeric_columns
-        DP->>DP: _filter_valid_data
-        DP->>DP: _clean_genres
+        DP->>DP: *convert_dates
+        DP->>DP: *convert_numeric_columns
+        DP->>DP: *filter_valid_data
+        DP->>DP: *clean_genres
     end
-
     DP->>Types: Create MovieData
     Types-->>DP: MovieData instance
     DP-->>Main: Return MovieData
-
     Main->>Main: create_plot_functions(config)
-
+    
+    rect rgba(255, 0, 0, 0.1)
+        Note over Main,DI: Generate insights
+        Main->>DI: generate_key_insights(movie_data, output_dir)
+        DI->>Types: valid_ratings/valid_runtime
+        Types-->>DI: Filtered DataFrame
+        DI->>DI: Generate markdown
+        DI->>FS: Save insights.md
+    end
+    
     rect rgba(0, 0, 255, 0.1)
         Note over Main,Viz: Generate each visualization
         loop For each plot function
@@ -78,8 +85,7 @@ sequenceDiagram
             Viz->>FS: Save PNG file
         end
     end
-
-    Note over Main: Visualization complete
+    Note over Main: Processing complete
 ```
 - Functional programming approach with immutable data structures
 - Pure functions for data processing and visualization
