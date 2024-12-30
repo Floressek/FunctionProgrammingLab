@@ -30,7 +30,7 @@ class CustomFormatter(logging.Formatter):
         message = self.green + record.message + self.reset
 
         # Złóż komunikat
-        formatted = f"{timestamp} - {level} - {name} - {location} - {message}"
+        formatted = f"[{timestamp}] - {level} - {name} - {location} - {message}"
 
         return formatted
 
