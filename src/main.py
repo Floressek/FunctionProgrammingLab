@@ -1,38 +1,42 @@
 # src/main.py
 from pathlib import Path
-from typing import List, Callable
+from typing import List, Callable, Tuple
 from functools import partial
+import warnings
+
+from matplotlib.figure import Figure
+
+from src.utils import MovieData, PlotConfig
+from utils.types import MovieData, PlotConfig
 from utils.logger import setup_logger
 from utils.config import ProjectConfig
-
-from utils.types import MovieData, PlotConfig
-from src.data_analysis.data_processing import read_movie_data
-from src.data_analysis.visualization import (
-    create_heatmap, create_genre_comparison,
-    create_yearly_trends, create_runtime_analysis,
+from data_analysis.data_processing import read_movie_data
+from data_analysis.data_insights import generate_key_insights
+from data_analysis.visualization import (
+    create_heatmap,
+    create_genre_comparison,
+    create_yearly_trends,
+    create_runtime_analysis,
     save_plot
 )
 
-import warnings
 warnings.filterwarnings("ignore")
 
-
 ProjectConfig.setup()
-# Initialize logger with string path
 logger = setup_logger(__name__, ProjectConfig.get_log_file("main"))
 
-def _create_plot_functions(config: PlotConfig) -> List[Callable[[MovieData], None]]:
-    """Create list of plot generation functions with config"""
-    plot_configs = [
-        ('heatmap', create_heatmap),
-        ('genres', create_genre_comparison),
-        ('trends', create_yearly_trends),
-        ('runtime', create_runtime_analysis)
-    ]
+PlotFunction = Tuple[str, Callable[[MovieData, PlotConfig], None]]
 
+
+def _create_plot_functions(config: PlotConfig) -> list[
+    tuple[str, Callable[[MovieData, PlotConfig], Figure]] | tuple[str, Callable[[MovieData, PlotConfig], Figure]] |
+    tuple[str, Callable[[MovieData, PlotConfig], Figure]] | tuple[str, Callable[[MovieData, PlotConfig], Figure]]]:
+    """Create list of plot generation functions with config"""
     return [
-        partial(plot_func, config=config)
-        for name, plot_func in plot_configs
+        ("heatmap", create_heatmap),
+        ("genres", create_genre_comparison),
+        ("trends", create_yearly_trends),
+        ("runtime", create_runtime_analysis)
     ]
 
 
@@ -48,26 +52,19 @@ def process_and_visualize(
 
         # Read and process data
         logger.info("Reading and processing data...")
-        movie_data = read_movie_data(data_path) # read and clean data
+        movie_data = read_movie_data(data_path)
 
-        # Generate and save all plots
+        # Generate insights
+        logger.info("Generating insights...")
+        _ = generate_key_insights(movie_data, ProjectConfig.PLOTS_DIR)  # print insights
+
+        # Generate and save plots
         logger.info("Generating visualizations...")
         plot_functions = _create_plot_functions(config)
 
-        plot_names = {
-            'create_heatmap': 'heatmap',
-            'create_genre_comparison': 'genres',
-            'create_yearly_trends': 'trends',
-            'create_runtime_analysis': 'runtime'
-        }
-
-        for plot_func in plot_functions:
-            # Get the original function name from the partial object
-            original_func_name = plot_func.func.__name__
-            plot_name = plot_names.get(original_func_name, original_func_name)
-
+        for plot_name, plot_func in plot_functions:
             try:
-                fig = plot_func(movie_data)
+                fig = plot_func(movie_data, config)
                 save_plot(fig, plot_name, output_dir, config)
                 logger.info(f"Generated {plot_name} plot")
             except Exception as e:
@@ -93,6 +90,7 @@ def main():
     output_dir = ProjectConfig.PLOTS_DIR
 
     process_and_visualize(data_path, output_dir, config)
+
 
 if __name__ == "__main__":
     main()
