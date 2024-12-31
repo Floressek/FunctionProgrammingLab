@@ -118,8 +118,7 @@ def save_plot(fig: plt.Figure, name: str, output_dir: Path, config: PlotConfig) 
     except Exception as e:
         logger.error(f'Failed saving plot: {str(e)}')
         raise VisualizationError(f'Error saving plot: {str(e)}')
-
-# TODO PRZEROBIC STAD NA NOWO
+        
 
 def create_genre_comparison(data: MovieData, config: PlotConfig) -> plt.Figure:
     """Create genre comparison visualization"""
